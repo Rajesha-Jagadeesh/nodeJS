@@ -5,7 +5,6 @@ import { configDotenv } from "dotenv";
 configDotenv()
 const mongoClient = mongodb.MongoClient;
 const url = `mongodb+srv://${process.env.NVM_MONGODB_USER}:${process.env.NVM_MONGODB_PASSWORD}@easyshopping.ry57tgj.mongodb.net/?retryWrites=true&w=majority`;
-const port = 10000;
 
 mongoClient.connect(
   url, 
@@ -19,7 +18,7 @@ mongoClient.connect(
   })
   .then(async client=>{
     await ProductsDAO.injectDB(client);
-    app.listen(port, ()=>{
+    app.listen(process.env.NVM_PORT, ()=>{
       console.log('Listing @ the port');
     })
   })
