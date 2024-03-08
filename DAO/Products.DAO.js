@@ -1,14 +1,20 @@
 import mongodb, { ObjectId } from "mongodb";
+import _ from "underscore";
 const objectId = mongodb.ObjectId;
 
-let shoes;
+let shoes, clothing, bags,tools, foods, alcohols;
 export default class ProductsDAO{
   static async injectDB(conn){
     try {
-      if (shoes) {
+      if (shoes || clothing || bags || tools || foods || alcohols) {
         return;
       }
       shoes = await conn.db('products').collection('shoes');
+      clothing = await conn.db('products').collection('clothing');
+      bags = await conn.db('products').collection('bags');
+      tools = await conn.db('products').collection('tools');
+      foods = await conn.db('products').collection('foods');
+      alcohols = await conn.db('products').collection('alcohols');
     } catch (error) {
       console.error(`errors in injectDB ${error}`);
     }
@@ -19,6 +25,8 @@ export default class ProductsDAO{
       switch (subcategory) {
         case 'shoes':
           return await shoes.insertOne(product);
+        case 'clothing':
+          return await clothing.insertOne(product);
         default :
           return false;
       }
@@ -27,12 +35,65 @@ export default class ProductsDAO{
     }
   }
 
-  static async getProducts(subcategory){
+  static async getProducts(subcategory, filters){
     try {
+      let filterData = {};
+      _.map(_.keys(filters), option=>{
+        let matrixOption = (filters[option]).split(',');
+        matrixOption = _.filter(matrixOption, value=> value !== "");
+        if (matrixOption) {
+          filterData[option] = {$in: matrixOption};
+        }
+      })
       switch (subcategory) {
         case 'shoes':
-          const products = await shoes.find();
-          return products.toArray();
+          if (filters && _.keys(filters).length) {
+            const products = await shoes.find(filterData);
+            return products.toArray();
+          } else {
+            const products = await shoes.find();
+            return products.toArray();
+          }
+        case 'clothing':
+          if (filters && _.keys(filters).length) {
+            const products = await clothing.find(filterData);
+            return products.toArray();
+          } else {
+            const products = await clothing.find();
+            return products.toArray();
+          }
+        case 'bags':
+          if (filters && _.keys(filters).length) {
+            const products = await bags.find(filterData);
+            return products.toArray();
+          } else {
+            const products = await bags.find();
+            return products.toArray();
+          }
+        case 'tools':
+          if (filters && _.keys(filters).length) {
+            const products = await tools.find(filterData);
+            return products.toArray();
+          } else {
+            const products = await tools.find();
+            return products.toArray();
+          }
+        case 'foods':
+          if (filters && _.keys(filters).length) {
+            const products = await foods.find(filterData);
+            return products.toArray();
+          } else {
+            const products = await foods.find();
+            return products.toArray();
+          }
+        case 'alcohols':
+          if (filters && _.keys(filters).length) {
+            const products = await alcohols.find(filterData);
+            return products.toArray();
+          } else {
+            const products = await alcohols.find();
+            return products.toArray();
+          }
       
         default:
           return []
