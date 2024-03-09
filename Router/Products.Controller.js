@@ -8,6 +8,7 @@ export default class ProductsController{
   }
   static async apiGetAllProducts(req, res, next){
     const response = await ProductsDAO.getProducts(req.params.subcategory, req.query);
-    res.json({success: true, message: "Product Fetched", products: response})
+    const {products, count} = response;
+    res.json({success: true, message: "Product Fetched", products, count})
   }
 }
