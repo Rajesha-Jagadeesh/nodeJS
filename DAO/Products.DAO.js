@@ -37,62 +37,82 @@ export default class ProductsDAO{
 
   static async getProducts(subcategory, filters){
     try {
-      let filterData = {};
+      let filterData = [];
+      let page = parseInt(filters.page);
+      delete filters.page;
+      let sort = filters.sort;
+      delete filters.sort;
+      let sortOption = {};
+      sortOption[sort ? sort : "name"] = 1;
       _.map(_.keys(filters), option=>{
         let matrixOption = (filters[option]).split(',');
         matrixOption = _.filter(matrixOption, value=> value !== "");
-        if (matrixOption) {
-          filterData[option] = {$in: matrixOption};
+        if (!_.isEmpty(matrixOption)) {
+          let object = {};
+          object[option] = {$all : matrixOption}  
+          filterData.push(object)
         }
-      })
+      });
       switch (subcategory) {
         case 'shoes':
           if (filters && _.keys(filters).length) {
-            const products = await shoes.find(filterData);
-            return products.toArray();
+            const products = await shoes.find({$and: [...filterData]}).sort(sortOption).skip(24 * (page - 1)).limit(24).project({matrixChild: 0, _id: 0});
+            const count = await shoes.countDocuments({$and: [...filterData]});
+            return{ products: await products.toArray(), count: count};
           } else {
-            const products = await shoes.find();
-            return products.toArray();
+            const products = await shoes.find().sort(sortOption).skip(24 * (page - 1)).limit(24).project({matrixChild: 0, _id: 0});
+            const count = await shoes.find().estimatedDocumentCount();
+            return{ products: await products.toArray(), count: count};
           }
         case 'clothing':
           if (filters && _.keys(filters).length) {
-            const products = await clothing.find(filterData);
-            return products.toArray();
+            const products = await clothing.find(filterData).sort(sortOption).skip(24 * (page - 1)).limit(24).project({matrixChild: 0, _id: 0});
+            const count = await clothing.find(filterData).estimatedDocumentCount();
+            return{ products: products.toArray(), count: count};
           } else {
-            const products = await clothing.find();
-            return products.toArray();
+            const products = await clothing.find().sort(sortOption).skip(24 * (page - 1)).limit(24).project({matrixChild: 0, _id: 0});
+            const count = await clothing.find(filterData).estimatedDocumentCount();
+            return{ products: products.toArray(), count: count};
           }
         case 'bags':
           if (filters && _.keys(filters).length) {
-            const products = await bags.find(filterData);
-            return products.toArray();
+            const products = await bags.find(filterData).sort(sortOption).skip(24 * (page - 1)).limit(24).project({matrixChild: 0, _id: 0});
+            const count = await bags.find(filterData).estimatedDocumentCount();
+            return{ products: products.toArray(), count: count};
           } else {
-            const products = await bags.find();
-            return products.toArray();
+            const products = await bags.find().sort(sortOption).skip(24 * (page - 1)).limit(24).project({matrixChild: 0, _id: 0});
+            const count = await bags.find(filterData).estimatedDocumentCount();
+            return{ products: products.toArray(), count: count};
           }
         case 'tools':
           if (filters && _.keys(filters).length) {
-            const products = await tools.find(filterData);
-            return products.toArray();
+            const products = await tools.find(filterData).sort(sortOption).skip(24 * (page - 1)).limit(24).project({matrixChild: 0, _id: 0});
+            const count = await tools.find(filterData).estimatedDocumentCount()
+            return{ products: products.toArray(), count: count};
           } else {
-            const products = await tools.find();
-            return products.toArray();
+            const products = await tools.find().sort(sortOption).skip(24 * (page - 1)).limit(24).project({matrixChild: 0, _id: 0});
+            const count = await tools.find(filterData).estimatedDocumentCount()
+            return{ products: products.toArray(), count: count};
           }
         case 'foods':
           if (filters && _.keys(filters).length) {
-            const products = await foods.find(filterData);
-            return products.toArray();
+            const products = await foods.find(filterData).sort(sortOption).skip(24 * (page - 1)).limit(24).project({matrixChild: 0, _id: 0});
+            const count = await foods.find(filterData).estimatedDocumentCount()
+            return{ products: products.toArray(), count: count};
           } else {
-            const products = await foods.find();
-            return products.toArray();
+            const products = await foods.find().sort(sortOption).skip(24 * (page - 1)).limit(24).project({matrixChild: 0, _id: 0});
+            const count = await foods.find(filterData).estimatedDocumentCount()
+            return{ products: products.toArray(), count: count};
           }
         case 'alcohols':
           if (filters && _.keys(filters).length) {
-            const products = await alcohols.find(filterData);
-            return products.toArray();
+            const products = await alcohols.find(filterData).sort(sortOption).skip(24 * (page - 1)).limit(24).project({matrixChild: 0, _id: 0});
+            const count = await alcohols.find(filterData).estimatedDocumentCount()
+            return{ products: products.toArray(), count: count};
           } else {
-            const products = await alcohols.find();
-            return products.toArray();
+            const products = await alcohols.find().sort(sortOption).skip(24 * (page - 1)).limit(24).project({matrixChild: 0, _id: 0});
+            const count = await alcohols.find(filterData).estimatedDocumentCount()
+            return{ products: products.toArray(), count: count};
           }
       
         default:
