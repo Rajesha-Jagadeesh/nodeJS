@@ -71,7 +71,7 @@ export default class ProductsDAO{
             return{ products: products.toArray(), count: count};
           } else {
             const products = await clothing.find().sort(sortOption).skip(24 * (page - 1)).limit(24).project({matrixChild: 0, _id: 0});
-            const count = await clothing.countDocuments(filterData);
+            const count = await clothing.countDocuments();
             return{ products: products.toArray(), count: count};
           }
         case 'bags':
@@ -81,7 +81,7 @@ export default class ProductsDAO{
             return{ products: products.toArray(), count: count};
           } else {
             const products = await bags.find().sort(sortOption).skip(24 * (page - 1)).limit(24).project({matrixChild: 0, _id: 0});
-            const count = await bags.countDocuments(filterData);
+            const count = await bags.countDocuments();
             return{ products: products.toArray(), count: count};
           }
         case 'tools':
@@ -91,7 +91,7 @@ export default class ProductsDAO{
             return{ products: products.toArray(), count: count};
           } else {
             const products = await tools.find().sort(sortOption).skip(24 * (page - 1)).limit(24).project({matrixChild: 0, _id: 0});
-            const count = await tools.countDocuments(filterData)
+            const count = await tools.countDocuments()
             return{ products: products.toArray(), count: count};
           }
         case 'foods':
@@ -101,7 +101,7 @@ export default class ProductsDAO{
             return{ products: products.toArray(), count: count};
           } else {
             const products = await foods.find().sort(sortOption).skip(24 * (page - 1)).limit(24).project({matrixChild: 0, _id: 0});
-            const count = await foods.countDocuments(filterData)
+            const count = await foods.countDocuments()
             return{ products: products.toArray(), count: count};
           }
         case 'alcohols':
@@ -111,7 +111,7 @@ export default class ProductsDAO{
             return{ products: products.toArray(), count: count};
           } else {
             const products = await alcohols.find().sort(sortOption).skip(24 * (page - 1)).limit(24).project({matrixChild: 0, _id: 0});
-            const count = await alcohols.countDocuments(filterData)
+            const count = await alcohols.countDocuments()
             return{ products: products.toArray(), count: count};
           }
       
