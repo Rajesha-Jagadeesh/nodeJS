@@ -11,4 +11,8 @@ export default class ProductsController{
     const {products, count} = response;
     res.json({success: true, message: "Product Fetched", products : _.isEmpty(products) ? [] : products, count})
   }
+  static async apiGetProductByUrl(req, res, next){
+    const response = await ProductsDAO.getProductByUrl(req.params.subcategory, req.params.productUrl);
+    res.json({success: true, message: "Product Fetched", product : response[0] ? response[0] : {}})
+  }
 }
