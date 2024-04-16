@@ -38,7 +38,7 @@ export default class CustomerDAO{
   }
 
   static async getRegistredCustomer(email){
-    let res = await customer.find({email: email}).project({_id: 0, password: 0});
+    let res = await customer.find({email: email}).project({_id: 0, password: 0, password2: 0});
     res =  await res.toArray();
     return res;
   }
@@ -55,7 +55,7 @@ export default class CustomerDAO{
 
   static async getCustomerById(id){
     try {
-      let response = await customer.find({customerId: id}).project({_id: 0, password: 0});
+      let response = await customer.find({customerId: id}).project({_id: 0, password: 0, password2: 0});
       response = await response.toArray();
       return {success: true, customer: response[0]}
     } catch (error) {

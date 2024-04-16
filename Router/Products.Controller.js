@@ -1,3 +1,4 @@
+import { response } from "express";
 import ProductsDAO from "../DAO/Products.DAO.js";
 import _ from "underscore";
 export default class ProductsController{
@@ -14,5 +15,29 @@ export default class ProductsController{
   static async apiGetProductByUrl(req, res, next){
     const response = await ProductsDAO.getProductByUrl(req.params.subcategory, req.params.productUrl);
     res.json({success: true, message: "Product Fetched", product : response[0] ? response[0] : {}})
+  }
+
+  static async apiGetProductsByParams(req, res, next){
+    let products = [];
+    if (req.query.id) {
+      let values = req.query.id.split(",");
+      let shoeFilters = await _.filter(values, identifier=> identifier.indexOf("shoe") > -1);
+      const shoes = await ProductsDAO.getProductsById("shoes", {id: {$in: shoeFilters}});
+      products = [...products, ...shoes];
+      let bagFilters = await _.filter(values, identifier=> identifier.indexOf("bag") > -1);
+      const bags = await ProductsDAO.getProductsById("bags", {id: {$in: bagFilters}});
+      products = [...products, ...bags];
+      let clothingFilters = await _.filter(values, identifier=> identifier.indexOf("clothing") > -1);
+      const clothing = await ProductsDAO.getProductsById("clothing", {id: {$in: clothingFilters}});
+      products = [...products, ...clothing];
+      let toolFilters = await _.filter(values, identifier=> identifier.indexOf("tool") > -1);
+      const tools = await ProductsDAO.getProductsById("tools", {id: {$in: toolFilters}});
+      products = [...products, ...tools];
+      let alcoholsFilters = await _.filter(values, identifier=> identifier.indexOf("alcohol") > -1);
+      const alcohols = await ProductsDAO.getProductsById("alcohols", {id: {$in: alcoholsFilters}});
+      products = [...products, ...alcohols];
+      
+    }
+    res.json({success: true, message: "Product Fetched", products: products })
   }
 }

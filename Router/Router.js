@@ -7,6 +7,7 @@ const router = express.Router();
 router.route('/products/new/:subcategory').post(ProductsController.apiAddProduct);
 router.route('/products/:subcategory').get(ProductsController.apiGetAllProducts);
 router.route('/products/:subcategory/:productUrl').get(ProductsController.apiGetProductByUrl);
+router.route("/items/getcollection").get(ProductsController.apiGetProductsByParams);
 router.route('/reviews/:subcategory/:productId').get(ReviewsController.apiGetReviews);
 router.route('/filter/:subcategory').get(FilterController.getFilterOptions);
 router.route("/customer/login").post(CustomerController.apiCustomerLogin);
