@@ -1,4 +1,3 @@
-import { response } from "express";
 import ProductsDAO from "../DAO/Products.DAO.js";
 import _ from "underscore";
 export default class ProductsController{
