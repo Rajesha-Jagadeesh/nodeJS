@@ -155,22 +155,22 @@ export default class ProductsDAO{
     try {
       switch (subcategory) {
         case "shoes": 
-          let shoeProduct = await shoes.find(query).project({_id: 0, matrixChild: 0})
+          let shoeProduct = await shoes.find(query).project({_id: 0})
           return await shoeProduct.toArray();
         case "clothing": 
-          let clothingProduct = await clothing.find(query).project({_id: 0, matrixChild: 0})
+          let clothingProduct = await clothing.find(query).project({_id: 0})
           return await clothingProduct.toArray();
         case "tools": 
-          let toolsProduct = await tools.find(query).project({_id: 0, matrixChild: 0})
+          let toolsProduct = await tools.find(query).project({_id: 0})
           return await toolsProduct.toArray();
         case "bags": 
-          let bagsProduct = await bags.find(query).project({_id: 0, matrixChild: 0})
+          let bagsProduct = await bags.find(query).project({_id: 0})
           return await bagsProduct.toArray();
         case "foods": 
-          let foodsProduct = await foods.find(query).project({_id: 0, matrixChild: 0})
+          let foodsProduct = await foods.find(query).project({_id: 0})
           return await foodsProduct.toArray();
         case "alcohols": 
-          let alcoholsProduct = await alcohols.find(query).project({_id: 0, matrixChild: 0})
+          let alcoholsProduct = await alcohols.find(query).project({_id: 0})
           return await alcoholsProduct.toArray();
         default: return [];
       }

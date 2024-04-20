@@ -40,7 +40,6 @@ export default class CustomerController{
 
   static async apiGetCustomerById(req, res, next){
     try {
-      console.log();
       const response = await CustomerDAO.getCustomerById(parseInt(req.params.id));
       res.json({success: true, customer: response.customer});
     } catch (error) {

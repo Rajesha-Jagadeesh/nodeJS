@@ -62,4 +62,30 @@ export default class CustomerDAO{
       return {success: false, message: "An error occured while getting customer information."}
     }
   }
+
+  static async updateCartCollection(id, collection){
+    try {
+      const cartUpdate = await customer.updateOne({customerId: id}, { $set: { cart : collection } });
+      if (cartUpdate && cartUpdate.matchedCount && cartUpdate.modifiedCount) {
+        return {success: true}
+      } else {
+        return {success: false}
+      }
+    } catch (error) {
+      return {success: false, error}
+    }
+  }
+
+  static async updateSaveLaterCollection(id, cartCollection, saveLaterCollection){
+    try {
+      const cartUpdate = await customer.updateOne({customerId: id}, { $set: { savelater : saveLaterCollection, cart: cartCollection } });
+      if (cartUpdate && cartUpdate.matchedCount && cartUpdate.modifiedCount) {
+        return {success: true}
+      } else {
+        return {success: false}
+      }
+    } catch (error) {
+      return {success: false, error}
+    }
+  }
 }
