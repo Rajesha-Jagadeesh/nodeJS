@@ -5,9 +5,14 @@ export default class CartController{
     const customerCartResponse = await CustomerDAO.getCustomerById(parseInt(req.body.customer));
     if (customerCartResponse.success) {
       let cartItems = customerCartResponse.customer.cart;
-      let item = req.body.item;
-      item.ts = new Date().getTime();
-      cartItems.push(item);
+      let existingCartItem = _.find(cartItems, item=> item.id === req.body.item.id);
+      if (existingCartItem && (JSON.stringify(existingCartItem.options) === JSON.stringify(req.body.item.options))) {
+        existingCartItem.quantity = existingCartItem.quantity + req.body.item.quantity;
+      } else {
+        let item = req.body.item;
+        item.ts = new Date().getTime();
+        cartItems.push(item);
+      }
       const cartResponse = await CustomerDAO.updateCartCollection(parseInt(req.body.customer), cartItems);
       if (cartResponse.success) {
         res.json({success: true, message: "Item is added to cart"});
@@ -103,6 +108,44 @@ export default class CartController{
       }
     } else {
       res.json({success: false, message: "An error occured while removing item from savelater"})
+    }
+  }
+  static async apiAddToFavorites(req, res, next){
+    const customerCartResponse = await CustomerDAO.getCustomerById(parseInt(req.body.customer));
+    if (customerCartResponse.success) {
+      let favoriteItems = customerCartResponse.customer.favorites;
+      if (favoriteItems.includes(req.body.item)) {
+        res.json({success: true, message: "Item is already added to your favorites list"})
+      } else {
+        favoriteItems.push(req.body.item);
+        const favResponse = await CustomerDAO.updateFavCollection(parseInt(req.body.customer), favoriteItems);
+        if (favResponse.success) {
+          res.json({success: true, message: "Item is added to favorites"});
+        } else {
+          res.json({success: false, message: "An error occured while adding to favorites"})
+        }
+      }
+    } else {
+      res.json({success: false, message: "An error occured while adding to favorites"})
+    }
+  }
+  static async apiRemoveFromFavorites(req, res, next){
+    const customerCartResponse = await CustomerDAO.getCustomerById(parseInt(req.body.customer));
+    if (customerCartResponse.success) {
+      let favoriteItems = customerCartResponse.customer.favorites;
+      if (favoriteItems.includes(req.body.item)) {
+        favoriteItems = _.filter(favoriteItems, item=> item !== req.body.item);
+        const favResponse = await CustomerDAO.updateFavCollection(parseInt(req.body.customer), favoriteItems);
+        if (favResponse.success) {
+          res.json({success: true, message: "Item is removed from favorites"});
+        } else {
+          res.json({success: false, message: "An error occured while removing from favorites"})
+        }
+      } else {
+        res.json({success: false, message: "Item is not avalable in your favorites list to remove "})
+      }
+    } else {
+      res.json({success: false, message: "An error occured while removing from favorites"})
     }
   }
 }

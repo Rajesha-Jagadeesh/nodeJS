@@ -88,4 +88,28 @@ export default class CustomerDAO{
       return {success: false, error}
     }
   }
+  static async updateFavCollection(id, updateFavCollection){
+    try {
+      const favoriteRes = await customer.updateOne({customerId: id}, { $set: { favorites : updateFavCollection } });
+      if (favoriteRes && favoriteRes.matchedCount && favoriteRes.modifiedCount) {
+        return {success: true}
+      } else {
+        return {success: false}
+      }
+    } catch (error) {
+      return {success: false, error}
+    }
+  }
+  static async updateAddressCollection(id, addresses){
+    try {
+      const favoriteRes = await customer.updateOne({customerId: id}, { $set: { address : addresses } });
+      if (favoriteRes && favoriteRes.matchedCount && favoriteRes.modifiedCount) {
+        return {success: true}
+      } else {
+        return {success: false}
+      }
+    } catch (error) {
+      return {success: false, error}
+    }
+  }
 }
