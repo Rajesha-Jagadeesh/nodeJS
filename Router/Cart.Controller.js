@@ -5,8 +5,8 @@ export default class CartController{
     const customerCartResponse = await CustomerDAO.getCustomerById(parseInt(req.body.customer));
     if (customerCartResponse.success) {
       let cartItems = customerCartResponse.customer.cart;
-      let existingCartItem = _.find(cartItems, item=> item.id === req.body.item.id);
-      if (existingCartItem && (JSON.stringify(existingCartItem.options) === JSON.stringify(req.body.item.options))) {
+      let existingCartItem = _.find(cartItems, item=> (item.id === req.body.item.id) && (JSON.stringify(item.options) === JSON.stringify(req.body.item.options)));
+      if (existingCartItem) {
         existingCartItem.quantity = existingCartItem.quantity + req.body.item.quantity;
       } else {
         let item = req.body.item;

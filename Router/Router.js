@@ -28,4 +28,6 @@ router.route("/myaccount/editaddress").post(MyAccountController.apiUpdateAddress
 router.route("/myaccount/deleteaddress").post(MyAccountController.apiDeleteAddress);
 router.route("/myaccount/setshipaddress").post(MyAccountController.apiSetShipAddress);
 router.route("/myaccount/setbilladdress").post(MyAccountController.apiSetBillAddress);
+router.route("/myaccount/purchase/list").get(MyAccountController.apiGetPurchases);
+router.route("/myaccount/purchase").post(MyAccountController.apiPlaceOrder);
 export default router;

@@ -112,4 +112,16 @@ export default class CustomerDAO{
       return {success: false, error}
     }
   }
+  static async updateCustomerObjects(id, object){
+    try {
+      const customerUpdate = await customer.updateOne({customerId: id}, { $set: object });
+      if (customerUpdate && customerUpdate.matchedCount && customerUpdate.modifiedCount) {
+        return {success: true}
+      } else {
+        return {success: false}
+      }
+    } catch (error) {
+      return {success: false, error}
+    }
+  }
 }

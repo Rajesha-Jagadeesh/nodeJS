@@ -1,5 +1,7 @@
 import _ from "underscore";
 import CustomerDAO from "../DAO/Customer.DAO.js";
+import PurchaseDAO from "../DAO/Purchase.DAO.js";
+import ProductsDAO from "../DAO/Products.DAO.js";
 export default class MyAccountController{
   static async apiAddAddress(req, res, next){
     const customerCartResponse = await CustomerDAO.getCustomerById(parseInt(req.body.customer));
@@ -98,7 +100,7 @@ export default class MyAccountController{
         customerAddresses = _.map(customerAddresses, address=>{
           address.isDefaultBill = address.internalid === addressId;
           return address;
-        })
+        });
         const addressResponse = await CustomerDAO.updateAddressCollection(parseInt(req.body.customer), customerAddresses);
         if (addressResponse.success) {
           res.json({success: true, message: "Billing address selected"});
@@ -110,6 +112,114 @@ export default class MyAccountController{
       }
     } else {
       res.json({success: false, message: "An error occured while selecting billing address"})
+    }
+  }
+  static async getCartSubtotal(productsList, cartItems){
+    let products = [];
+    let shoeFilters = await _.filter(productsList, identifier=> identifier.indexOf("shoe") > -1);
+    const shoes = await ProductsDAO.getProductsById("shoes", {id: {$in: shoeFilters}});
+    products = [...products, ...shoes];
+    let bagFilters = await _.filter(productsList, identifier=> identifier.indexOf("bag") > -1);
+    const bags = await ProductsDAO.getProductsById("bags", {id: {$in: bagFilters}});
+    products = [...products, ...bags];
+    let clothingFilters = await _.filter(productsList, identifier=> identifier.indexOf("clothing") > -1);
+    const clothing = await ProductsDAO.getProductsById("clothing", {id: {$in: clothingFilters}});
+    products = [...products, ...clothing];
+    let toolFilters = await _.filter(productsList, identifier=> identifier.indexOf("tool") > -1);
+    const tools = await ProductsDAO.getProductsById("tools", {id: {$in: toolFilters}});
+    products = [...products, ...tools];
+    let alcoholsFilters = await _.filter(productsList, identifier=> identifier.indexOf("alcohol") > -1);
+    const alcohols = await ProductsDAO.getProductsById("alcohols", {id: {$in: alcoholsFilters}});
+    products = [...products, ...alcohols];
+    let subTotal = 0;
+    _.map(cartItems, (item) =>(subTotal = ((item.quantity *( _.find(products, collection=>collection.id === item.id).price)) + parseFloat(subTotal)).toFixed(2)))
+    return parseFloat(subTotal);
+  }
+
+  static async apiGetPurchases(req, res, next){
+    const customerResponse = await CustomerDAO.getCustomerById(parseInt(req.query.id));
+    if (customerResponse.success) {
+      let purchaseList = customerResponse.customer.purchases;
+      if (!purchaseList.length) {
+        res.json({success: true, purchase: []})
+      } else {
+        let purchaseResponse = await PurchaseDAO.getPurchases(purchaseList);
+        res.json(purchaseResponse);
+      }
+    } else {
+      res.json({success: false, message: "An error occured while fetching order list"})
+    }
+  }
+
+  static async apiPlaceOrder(req, res, next){
+    const customerResponse = await CustomerDAO.getCustomerById(parseInt(req.body.customer));
+    if (customerResponse.success) {
+      let cartItems = customerResponse.customer.cart;
+      if (!cartItems.length) {
+        res.json({success: false, message: "There are no items avalable in the cart to place order"});
+      } else {
+        let lastOrder = await PurchaseDAO.getLastPurchaseOrder();
+        if (lastOrder) {
+          let today = new Date();
+          let deliveryDate = today.setDate(today.getDate() + 2)
+          let billAddress = _.clone(_.find(customerResponse.customer.address, addr=>addr.isDefaultBill));
+          delete billAddress.isDefaultBill;
+          delete billAddress.isDefaultShip;
+          let shippAddress = _.clone(_.find(customerResponse.customer.address, addr=>addr.isDefaultShip));
+          delete shippAddress.isDefaultBill;
+          delete shippAddress.isDefaultShip;
+          let shippingDetails = req.body.shipping ?? {};
+          shippingDetails.estimate = deliveryDate;
+          let discount = req.body.discount ?? 0;
+          let tax = req.body.tax ?? 0;
+          let paymentDetails = req.body.payment;
+          let cartTotal = await MyAccountController.getCartSubtotal(_.map(cartItems, item=>item.id), cartItems)
+          let order = {
+            "record": "purchase",
+            "customer": req.body.customer,
+            "internalid": lastOrder.orderId + 1,
+            "sonumber": `SO${lastOrder.orderId + 1}`,
+            "ponumber": `PO${lastOrder.orderId + 1}`,
+            "status": "Pending Approval",
+            "orderDate": new Date().getTime(),
+            "deliveryDate": deliveryDate,
+            "address": {
+              "shipping": shippAddress,
+              "billing": billAddress
+            },
+            "payment": {
+              "method": paymentDetails.method,
+              "id": paymentDetails.id,
+              "amount": paymentDetails.amount,
+              "name": paymentDetails.name
+            },
+            "items": cartItems,
+            "shipping": shippingDetails,
+            "summary":{
+              "subtotal" : cartTotal,
+              "shipping": shippingDetails.cost ?? 0,
+              "discount": discount,
+              "tax": tax,
+              "total": parseFloat((cartTotal + (shippingDetails.cost ?? 0) + (discount ?? 0) + (tax ?? 0)).toFixed(2))
+            }
+          }
+          let orderResponse = await PurchaseDAO.placeOrder(order);
+          if (orderResponse) {
+            let oldPurchases = customerResponse.customer.purchases;
+            oldPurchases.push(`SO${lastOrder.orderId + 1}`)
+            let purchaseData  = await CustomerDAO.updateCustomerObjects(parseInt(req.body.customer), {cart: [],purchases: oldPurchases });
+            if (purchaseData.success) {
+              res.json({success: true, message: "Your order has be placed", orderNumber: `SO${lastOrder.orderId + 1}`});
+            }else{
+              res.json({success: false, message: "An error occured while placing order"});
+            }
+          } else {
+            res.json({success: false, message: "An error occured while placing order"});
+          }
+        }
+      }
+    } else {
+      res.json({success: false, message: "An error occured while placing order"});
     }
   }
 }
