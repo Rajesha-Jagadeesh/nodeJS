@@ -30,4 +30,5 @@ router.route("/myaccount/setshipaddress").post(MyAccountController.apiSetShipAdd
 router.route("/myaccount/setbilladdress").post(MyAccountController.apiSetBillAddress);
 router.route("/myaccount/purchase/list").get(MyAccountController.apiGetPurchases);
 router.route("/myaccount/purchase").post(MyAccountController.apiPlaceOrder);
+router.route("/search").get(ProductsController.apiSearchProducts);
 export default router;

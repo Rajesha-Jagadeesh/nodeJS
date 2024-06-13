@@ -39,4 +39,20 @@ export default class ProductsController{
     }
     res.json({success: true, message: "Product Fetched", products: products })
   }
+  static async apiSearchProducts(req, res, next){
+    let products = [];
+    let values = req.query.key;
+    let regexValue = new RegExp(values, "i");
+    const shoes = await ProductsDAO.getProductsByQuery("shoes", {$or : [{name: {$regex : regexValue }}, {id: {$regex : regexValue }}]});
+    products = [...products, ...shoes];
+    const bags = await ProductsDAO.getProductsByQuery("bags", {$or : [{name: {$regex : regexValue }}, {id: {$regex : regexValue }}]});
+    products = [...products, ...bags];
+    const clothing = await ProductsDAO.getProductsByQuery("clothing", {$or : [{name: {$regex : regexValue }}, {id: {$regex : regexValue }}]});
+    products = [...products, ...clothing];
+    const tools = await ProductsDAO.getProductsByQuery("tools", {$or : [{name: {$regex : regexValue }}, {id: {$regex : regexValue }}]});
+    products = [...products, ...tools];
+    const alcohols = await ProductsDAO.getProductsByQuery("alcohols", {$or : [{name: {$regex : regexValue }}, {id: {$regex : regexValue }}]});
+    products = [...products, ...alcohols];
+    res.json({success: true, message: "Product Fetched", products: products, count : products.length })
+  }
 }
