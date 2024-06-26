@@ -6,6 +6,7 @@ import FilterDAO from "./DAO/Filters.DAO.js";
 import ReviewsDAO from "./DAO/Reviews.DAO.js";
 import CustomerDAO from "./DAO/Customer.DAO.js";
 import PurchaseDAO from "./DAO/Purchase.DAO.js";
+import ContactUsDAO from "./DAO/ContactUs_DAO.js";
 configDotenv()
 const mongoClient = mongodb.MongoClient;
 const url = `mongodb+srv://${process.env.NVM_MONGODB_USER}:${process.env.NVM_MONGODB_PASSWORD}@easyshopping.ry57tgj.mongodb.net/?retryWrites=true&w=majority`;
@@ -25,7 +26,8 @@ mongoClient.connect(
     await FilterDAO.inJectDB(client);
     await ReviewsDAO.inJectDB(client);
     await CustomerDAO.inJectDB(client);
-    await PurchaseDAO.inJectDB(client)
+    await PurchaseDAO.inJectDB(client);
+    await ContactUsDAO.inJectDB(client);
     app.listen(process.env.NVM_PORT, ()=>{
       console.log('Listing @ the port', process.env.NVM_PORT);
     })

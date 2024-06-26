@@ -41,4 +41,32 @@ export default class ReviewsDAO{
       console.log("Error @ getReviewsByProductId", error);
     }
   }
+  static async saveReview(subcategory, data){
+    try {
+      let reviews
+      switch (subcategory) {
+        case "shoes":
+          reviews = await shoesReviews.insertOne(data);
+          return await {success: !!reviews};
+          case "tools":
+          reviews = await toolsReviews.insertOne(data);
+          return await {success: !!reviews};
+          case "bags":
+          reviews = await bagsReviews.insertOne(data);
+          return await {success: !!reviews};
+          case "clothing":
+          reviews = await clothingReviews.insertOne(data);
+          return await {success: !!reviews};
+          case "foods":
+          reviews = await foodsReviews.insertOne(data);
+          return await {success: !!reviews};
+          case "alcohols":
+          reviews = await alcoholsReviews.insertOne(data);
+          return await {success: !!reviews};
+        default: return []
+      }
+    } catch (error) {
+      console.log("Error @ saveReview", error);
+    }
+  }
 }
