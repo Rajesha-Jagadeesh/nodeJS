@@ -5,12 +5,15 @@ import ReviewsController from "./Reviews.Controller.js";
 import CustomerController from "./Customer.Controller.js";
 import CartController from "./Cart.Controller.js";
 import MyAccountController from "./Myaccount.Controller.js";
+import ContactusController from "./ContactUs_Controller.js";
 const router = express.Router();
 router.route('/products/new/:subcategory').post(ProductsController.apiAddProduct);
 router.route('/products/:subcategory').get(ProductsController.apiGetAllProducts);
 router.route('/products/:subcategory/:productUrl').get(ProductsController.apiGetProductByUrl);
 router.route("/items/getcollection").get(ProductsController.apiGetProductsByParams);
 router.route('/reviews/:subcategory/:productId').get(ReviewsController.apiGetReviews);
+router.route('/reviews').post(ReviewsController.apiSaveReview);
+router.route("/get-purchased-product").get(ReviewsController.apiGetProduct)
 router.route('/filter/:subcategory').get(FilterController.getFilterOptions);
 router.route("/customer/login").post(CustomerController.apiCustomerLogin);
 router.route("/customer/register").post(CustomerController.apiCustomerRegister);
@@ -31,4 +34,5 @@ router.route("/myaccount/setbilladdress").post(MyAccountController.apiSetBillAdd
 router.route("/myaccount/purchase/list").get(MyAccountController.apiGetPurchases);
 router.route("/myaccount/purchase").post(MyAccountController.apiPlaceOrder);
 router.route("/search").get(ProductsController.apiSearchProducts);
+router.route("/contact-us").post(ContactusController.apiSaveContact);
 export default router;
