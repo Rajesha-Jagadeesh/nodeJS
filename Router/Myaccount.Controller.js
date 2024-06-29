@@ -131,6 +131,9 @@ export default class MyAccountController{
     let alcoholsFilters = await _.filter(productsList, identifier=> identifier.indexOf("alcohol") > -1);
     const alcohols = await ProductsDAO.getProductsById("alcohols", {id: {$in: alcoholsFilters}});
     products = [...products, ...alcohols];
+    let electonicsFilters = await _.filter(productsList, identifier=> identifier.indexOf("electonics") > -1);
+    const electonics = await ProductsDAO.getProductsById("electonics", {id: {$in: electonicsFilters}});
+    products = [...products, ...electonics];
     let subTotal = 0;
     _.map(cartItems, (item) =>(subTotal = ((item.quantity *( _.find(products, collection=>collection.id === item.id).price)) + parseFloat(subTotal)).toFixed(2)))
     return parseFloat(subTotal);

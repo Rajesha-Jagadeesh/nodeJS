@@ -37,6 +37,6 @@ export default class ReviewsController {
     let itemPurchases = _.filter(purchaseResponse.purchase, data=>{
       return !_.isEmpty(_.find(data.items, item=>item.id === req.query.product));
     })
-    res.json({success: !!itemPurchases.length, message : itemPurchases.length > 0 ? "This product can be reviewd" : "This product needs to be purchased before adding the review."})
+    res.json({success: !!itemPurchases.length, message : itemPurchases.length > 0 ? "This product can be reviewd" : "This product needs to be purchased before adding a review."})
   }
 }

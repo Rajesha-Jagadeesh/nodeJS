@@ -2,11 +2,11 @@ import mongodb, { ObjectId } from "mongodb";
 import _ from "underscore";
 const objectId = mongodb.ObjectId;
 
-let shoes, clothing, bags,tools, foods, alcohols;
+let shoes, clothing, bags,tools, foods, alcohols, electonics;
 export default class ProductsDAO{
   static async injectDB(conn){
     try {
-      if (shoes && clothing && bags && tools && foods && alcohols) {
+      if (shoes && clothing && bags && tools && foods && alcohols && electonics) {
         return;
       }
       shoes = await conn.db('products').collection('shoes');
@@ -15,6 +15,7 @@ export default class ProductsDAO{
       tools = await conn.db('products').collection('tools');
       foods = await conn.db('products').collection('foods');
       alcohols = await conn.db('products').collection('alcohols');
+      electonics = await conn.db('products').collection('electonics');
     } catch (error) {
       console.error(`errors in injectDB ${error}`);
     }
@@ -114,6 +115,16 @@ export default class ProductsDAO{
             const count = await alcohols.countDocuments()
             return{ products: await products.toArray(), count: count};
           }
+        case 'electonics':
+          if (filters && _.keys(filters).length) {
+            const products = await electonics.find({$and: [...filterData]}).sort(sortOption).skip(24 * (page - 1)).limit(24).project({matrixChild: 0, _id: 0});
+            const count = await electonics.countDocuments({$and: [...filterData]})
+            return{ products: await products.toArray(), count: count};
+          } else {
+            const products = await electonics.find().sort(sortOption).skip(24 * (page - 1)).limit(24).project({matrixChild: 0, _id: 0});
+            const count = await electonics.countDocuments()
+            return{ products: await products.toArray(), count: count};
+          }
       
         default:
           return []
@@ -144,6 +155,9 @@ export default class ProductsDAO{
         case "alcohols": 
           let alcoholsProduct = await alcohols.find({url: productUrl}).project({_id: 0})
           return await alcoholsProduct.toArray();
+        case "electonics": 
+          let electonicsProduct = await electonics.find({url: productUrl}).project({_id: 0})
+          return await electonicsProduct.toArray();
         default: return [];
       }
     } catch (error) {
@@ -172,6 +186,9 @@ export default class ProductsDAO{
         case "alcohols": 
           let alcoholsProduct = await alcohols.find(query).project({_id: 0})
           return await alcoholsProduct.toArray();
+        case "electonics": 
+          let electonicsProduct = await electonics.find(query).project({_id: 0})
+          return await electonicsProduct.toArray();
         default: return [];
       }
     } catch (error) {
@@ -199,6 +216,9 @@ export default class ProductsDAO{
         case "alcohols": 
           let alcoholsProduct = await alcohols.find(query).project({_id: 0})
           return await alcoholsProduct.toArray();
+        case "electonics": 
+          let electonicsProduct = await electonics.find(query).project({_id: 0})
+          return await electonicsProduct.toArray();
         default: return [];
       }
     } catch (error) {
