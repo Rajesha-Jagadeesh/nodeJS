@@ -1,8 +1,8 @@
 
-let shoesReviews, bagsReviews, toolsReviews, clothingReviews, alcoholsReviews, foodsReviews;
+let shoesReviews, bagsReviews, toolsReviews, clothingReviews, alcoholsReviews, foodsReviews, electonicsReviews;
 export default class ReviewsDAO{
   static async inJectDB(conn){
-    if (shoesReviews || bagsReviews || toolsReviews || clothingReviews || alcoholsReviews || foodsReviews) {
+    if (shoesReviews || bagsReviews || toolsReviews || clothingReviews || alcoholsReviews || foodsReviews || electonicsReviews) {
       return;
     }
     shoesReviews = await conn.db("reviews").collection('shoes');
@@ -11,6 +11,7 @@ export default class ReviewsDAO{
     toolsReviews = await conn.db("reviews").collection('tools');
     foodsReviews = await conn.db("reviews").collection('foods');
     alcoholsReviews = await conn.db("reviews").collection('alcohols');
+    electonicsReviews = await conn.db("reviews").collection('electonics');
   }
 
   static async getReviewsByProductId(subcategory, productId){
@@ -34,6 +35,9 @@ export default class ReviewsDAO{
           return await reviews.toArray();
           case "alcohols":
           reviews = await alcoholsReviews.find({product: productId}).sort({date: -1}).project({_id: 0});
+          return await reviews.toArray();
+          case "electonics":
+          reviews = await electonicsReviews.find({product: productId}).sort({date: -1}).project({_id: 0});
           return await reviews.toArray();
         default: return []
       }
@@ -62,6 +66,9 @@ export default class ReviewsDAO{
           return await {success: !!reviews};
           case "alcohols":
           reviews = await alcoholsReviews.insertOne(data);
+          return await {success: !!reviews};
+          case "electonics":
+          reviews = await electonicsReviews.insertOne(data);
           return await {success: !!reviews};
         default: return []
       }
