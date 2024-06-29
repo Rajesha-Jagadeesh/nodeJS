@@ -35,4 +35,5 @@ router.route("/myaccount/purchase/list").get(MyAccountController.apiGetPurchases
 router.route("/myaccount/purchase").post(MyAccountController.apiPlaceOrder);
 router.route("/search").get(ProductsController.apiSearchProducts);
 router.route("/contact-us").post(ContactusController.apiSaveContact);
+router.route("/chart-data").get(MyAccountController.getChartData);
 export default router;

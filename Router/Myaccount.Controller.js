@@ -90,6 +90,47 @@ export default class MyAccountController{
       res.json({success: false, message: "An error occured while selecting shipping address"})
     }
   }
+  static async getChartData(req, res, next){
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"];
+    let date = new Date();
+    let months = [];
+    await _.each([0,1,2,3,4], i=>{
+      months.push(monthNames[date.getMonth() - i < 0 ? (12 + date.getMonth()) - i: date.getMonth() - i] );
+    })
+    months = months.reverse();
+    try {
+      const customerResponse = await CustomerDAO.getCustomerById(parseInt(req.query.customer));
+      if (customerResponse.success) {
+        let purchaseList = customerResponse.customer.purchases;
+        if (!purchaseList.length) {
+          res.json({success: true, months: months, purchase: [0,0,0,0,0], return: [0,0,0,0,0]})
+        } else {
+          let purchaseResponse = await PurchaseDAO.getPurchases(purchaseList);
+          let purchase = [];
+          await _.each([0,1,2,4,5], async i=>{
+            let amount = 0;
+            await _.each(purchaseResponse.purchase, data=>{
+              let currentDate = new Date();
+              currentDate.setMonth(new Date().getMonth() - i);
+              let orderDate = new Date(data.orderDate);
+              let beforemonth = new Date();
+              beforemonth.setMonth(new Date().getMonth() - (i+1));
+              if (beforemonth <= orderDate && currentDate >= orderDate) {
+                amount = amount + parseFloat((data.summary.total).toFixed(2));
+              }
+            })
+            purchase.push(amount);
+          })
+          purchase = purchase.reverse();
+          res.json({success: true, months: months, purchase: purchase, return: [0,0,0,0,0]})
+        }
+      }
+    } catch (error) {
+      console.log("ERROR", error);
+      res.json({success: false, months: months, purchase: [0,0,0,0,0], return: [0,0,0,0,0]})
+    }
+  }
   static async apiSetBillAddress(req, res, next){
     const customerCartResponse = await CustomerDAO.getCustomerById(parseInt(req.body.customer));
     if (customerCartResponse.success) {
