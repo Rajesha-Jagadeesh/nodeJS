@@ -35,9 +35,9 @@ export default class ProductsController{
       let alcoholsFilters = await _.filter(values, identifier=> identifier.indexOf("alcohol") > -1);
       const alcohols = await ProductsDAO.getProductsById("alcohols", {id: {$in: alcoholsFilters}});
       products = [...products, ...alcohols];
-      let electonicsFilters = await _.filter(values, identifier=> identifier.indexOf("electonics") > -1);
-      const electonics = await ProductsDAO.getProductsById("electonics", {id: {$in: electonicsFilters}});
-      products = [...products, ...electonics];
+      let electronicsFilters = await _.filter(values, identifier=> identifier.indexOf("electronics") > -1);
+      const electronics = await ProductsDAO.getProductsById("electronics", {id: {$in: electronicsFilters}});
+      products = [...products, ...electronics];
       
     }
     res.json({success: true, message: "Product Fetched", products: products })
@@ -56,8 +56,8 @@ export default class ProductsController{
     products = [...products, ...tools];
     const alcohols = await ProductsDAO.getProductsByQuery("alcohols", {$or : [{name: {$regex : regexValue }}, {id: {$regex : regexValue }}]});
     products = [...products, ...alcohols];
-    const electonics = await ProductsDAO.getProductsByQuery("electonics", {$or : [{name: {$regex : regexValue }}, {id: {$regex : regexValue }}]});
-    products = [...products, ...electonics];
+    const electronics = await ProductsDAO.getProductsByQuery("electronics", {$or : [{name: {$regex : regexValue }}, {id: {$regex : regexValue }}]});
+    products = [...products, ...electronics];
     res.json({success: true, message: "Product Fetched", products: products, count : products.length })
   }
 }

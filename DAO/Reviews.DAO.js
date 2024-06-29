@@ -1,8 +1,8 @@
 
-let shoesReviews, bagsReviews, toolsReviews, clothingReviews, alcoholsReviews, foodsReviews, electonicsReviews;
+let shoesReviews, bagsReviews, toolsReviews, clothingReviews, alcoholsReviews, foodsReviews, electronicsReviews;
 export default class ReviewsDAO{
   static async inJectDB(conn){
-    if (shoesReviews || bagsReviews || toolsReviews || clothingReviews || alcoholsReviews || foodsReviews || electonicsReviews) {
+    if (shoesReviews || bagsReviews || toolsReviews || clothingReviews || alcoholsReviews || foodsReviews || electronicsReviews) {
       return;
     }
     shoesReviews = await conn.db("reviews").collection('shoes');
@@ -11,7 +11,7 @@ export default class ReviewsDAO{
     toolsReviews = await conn.db("reviews").collection('tools');
     foodsReviews = await conn.db("reviews").collection('foods');
     alcoholsReviews = await conn.db("reviews").collection('alcohols');
-    electonicsReviews = await conn.db("reviews").collection('electonics');
+    electronicsReviews = await conn.db("reviews").collection('electronics');
   }
 
   static async getReviewsByProductId(subcategory, productId){
@@ -36,8 +36,8 @@ export default class ReviewsDAO{
           case "alcohols":
           reviews = await alcoholsReviews.find({product: productId}).sort({date: -1}).project({_id: 0});
           return await reviews.toArray();
-          case "electonics":
-          reviews = await electonicsReviews.find({product: productId}).sort({date: -1}).project({_id: 0});
+          case "electronics":
+          reviews = await electronicsReviews.find({product: productId}).sort({date: -1}).project({_id: 0});
           return await reviews.toArray();
         default: return []
       }
@@ -67,8 +67,8 @@ export default class ReviewsDAO{
           case "alcohols":
           reviews = await alcoholsReviews.insertOne(data);
           return await {success: !!reviews};
-          case "electonics":
-          reviews = await electonicsReviews.insertOne(data);
+          case "electronics":
+          reviews = await electronicsReviews.insertOne(data);
           return await {success: !!reviews};
         default: return []
       }
