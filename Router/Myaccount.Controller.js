@@ -6,10 +6,10 @@ export default class MyAccountController{
   static async apiAddAddress(req, res, next){
     const customerCartResponse = await CustomerDAO.getCustomerById(parseInt(req.body.customer));
     if (customerCartResponse.success) {
-      let customerAddresses = customerCartResponse.customer.address;
+      let customerAddresses = customerCartResponse.customer.address ?? [];
       let newAddress = req.body.address;
       newAddress.internalid = new Date().getTime();
-      if (customerAddresses.length === 0) {
+      if (customerAddresses && customerAddresses.length === 0) {
         newAddress.isDefaultShip = true;
         newAddress.isDefaultBill = true;
       }
